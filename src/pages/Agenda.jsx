@@ -57,7 +57,7 @@ export default function Agenda() {
       alert('Esta cita no tiene número de teléfono registrado.')
       return
     }
-    const mensaje = `Hola ${cita.nombre_paciente}, le recordamos su cita en el consultorio dental el ${cita.fecha} a las ${cita.hora}. ¡Le esperamos!`
+    const mensaje = `Hola ${cita.nombre_paciente}, es un placer saludarle el dia de hoy, el motivo de este mensaje es para recordale que tenemos programada su cita en el consultorio dental el dia ${cita.fecha} a las ${cita.hora}. Le agradeceremos si nos puede enviar un mensaje confirmando sus asistencia ¡Le esperamos!`
     window.open(`https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`, '_blank')
   }
 
