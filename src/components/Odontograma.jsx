@@ -56,10 +56,16 @@ function Diente({ numero, info, onClick }) {
 
 export default function Odontograma({ tipo = 'adulto', data, onChange }) {
   const [seleccion, setSeleccion] = useState(null) // numero de diente activo
+  const [notaLocal, setNotaLocal] = useState('') // buffer local mientras se escribe, evita guardar en cada tecla
   const superior = tipo === 'adulto' ? ADULTO_SUPERIOR : NINO_SUPERIOR
   const inferior = tipo === 'adulto' ? ADULTO_INFERIOR : NINO_INFERIOR
 
   const dienteInfo = seleccion ? data?.[seleccion] || { conditions: [], nota: '' } : null
+
+  function abrirDiente(numero) {
+    setSeleccion(numero)
+    setNotaLocal((data?.[numero] || {}).nota || '')
+  }
 
   function toggleCondicion(cond) {
     const actuales = dienteInfo.conditions || []
@@ -69,8 +75,11 @@ export default function Odontograma({ tipo = 'adulto', data, onChange }) {
     onChange({ ...data, [seleccion]: { ...dienteInfo, conditions: nuevas } })
   }
 
-  function cambiarNota(nota) {
-    onChange({ ...data, [seleccion]: { ...dienteInfo, nota } })
+  // Solo escribe en la base de datos cuando el usuario sale del campo (o cierra el modal),
+  // no en cada tecla presionada — así se evita la demora al escribir.
+  function guardarNota() {
+    if (notaLocal === (dienteInfo?.nota || '')) return
+    onChange({ ...data, [seleccion]: { ...dienteInfo, nota: notaLocal } })
   }
 
   return (
@@ -79,13 +88,13 @@ export default function Odontograma({ tipo = 'adulto', data, onChange }) {
         <div className="flex flex-col gap-3 min-w-max mx-auto items-center">
           <div className="flex gap-1">
             {superior.map((n) => (
-              <Diente key={n} numero={n} info={data?.[n]} onClick={() => setSeleccion(n)} />
+              <Diente key={n} numero={n} info={data?.[n]} onClick={() => abrirDiente(n)} />
             ))}
           </div>
           <div className="w-full border-t border-line" />
           <div className="flex gap-1">
             {inferior.map((n) => (
-              <Diente key={n} numero={n} info={data?.[n]} onClick={() => setSeleccion(n)} />
+              <Diente key={n} numero={n} info={data?.[n]} onClick={() => abrirDiente(n)} />
             ))}
           </div>
         </div>
@@ -100,7 +109,10 @@ export default function Odontograma({ tipo = 'adulto', data, onChange }) {
       </div>
 
       {seleccion && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4" onClick={() => setSeleccion(null)}>
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
+          onClick={() => { guardarNota(); setSeleccion(null) }}
+        >
           <div className="card w-full max-w-sm p-5" onClick={(e) => e.stopPropagation()}>
             <h3 className="font-display text-lg text-pine mb-3">Pieza dental {seleccion}</h3>
             <div className="grid grid-cols-2 gap-2 mb-4">
@@ -123,11 +135,12 @@ export default function Odontograma({ tipo = 'adulto', data, onChange }) {
             <textarea
               className="input mb-4"
               rows={3}
-              value={dienteInfo.nota || ''}
-              onChange={(e) => cambiarNota(e.target.value)}
+              value={notaLocal}
+              onChange={(e) => setNotaLocal(e.target.value)}
+              onBlur={guardarNota}
               placeholder="Observaciones sobre esta pieza…"
             />
-            <button className="btn-primary w-full" onClick={() => setSeleccion(null)}>
+            <button className="btn-primary w-full" onClick={() => { guardarNota(); setSeleccion(null) }}>
               Listo
             </button>
           </div>
