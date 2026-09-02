@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background: #F6F3EC;
+  color: #16302E;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #C7D3CC transparent;
+}
+
+.card {
+  background: #FFFFFF;
+  border: 1px solid #DDE4DE;
+  border-radius: 8px;
+}
+
+.btn-primary {
+  background: #0E4B44;
+  color: #F6F3EC;
+  border-radius: 6px;
+  padding: 0.55rem 1.1rem;
+  font-weight: 500;
+  transition: background 0.15s ease;
+}
+.btn-primary:hover { background: #146B60; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary {
+  background: transparent;
+  color: #0E4B44;
+  border: 1px solid #0E4B44;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: background 0.15s ease;
+}
+.btn-secondary:hover { background: #E7EFE9; }
+
+.btn-danger {
+  color: #A6402B;
+  border: 1px solid #C96A4B;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  background: transparent;
+}
+.btn-danger:hover { background: #F0DCD3; }
+
+.input {
+  width: 100%;
+  border: 1px solid #DDE4DE;
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  background: #fff;
+  font-size: 0.9rem;
+}
+.input:focus {
+  outline: 2px solid #146B60;
+  outline-offset: 1px;
+}
+
+label.field-label {
+  font-size: 0.78rem;
+  color: #4B615C;
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+  display: block;
+}
