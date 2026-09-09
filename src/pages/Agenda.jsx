@@ -3,6 +3,21 @@ import { supabase } from '../lib/supabaseClient'
 
 const ESTADOS = ['Programada', 'Confirmada', 'Atendida', 'Cancelada', 'No asistió']
 
+function hoyISO() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+function formatearFecha(fechaISO) {
+  if (!fechaISO) return '—'
+  const [anio, mes, dia] = fechaISO.split('-').map(Number)
+  const fecha = new Date(anio, mes - 1, dia)
+  const texto = new Intl.DateTimeFormat('es', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+  }).format(fecha)
+  return texto.charAt(0).toUpperCase() + texto.slice(1)
+}
+
 const CITA_VACIA = {
   nombre_paciente: '',
   fecha: '',
@@ -57,12 +72,12 @@ export default function Agenda() {
       alert('Esta cita no tiene número de teléfono registrado.')
       return
     }
-    const mensaje = `Hola ${cita.nombre_paciente}, es un placer saludarle el dia de hoy, el motivo de este mensaje es para recordale que tenemos programada su cita en el consultorio dental el dia ${cita.fecha} a las ${cita.hora}. Le agradeceremos si nos puede enviar un mensaje confirmando sus asistencia ¡Le esperamos!`
+    const mensaje = `Hola ${cita.nombre_paciente}, le recordamos su cita en el consultorio dental el ${formatearFecha(cita.fecha)} a las ${cita.hora}. ¡Le esperamos!`
     window.open(`https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`, '_blank')
   }
 
   const filtradas = citas.filter((c) =>
-    (!filtroFecha || c.fecha === filtroFecha) &&
+    (filtroFecha ? c.fecha === filtroFecha : c.fecha >= hoyISO()) &&
     (!filtroEstado || c.estado === filtroEstado) &&
     (!filtroNombre || c.nombre_paciente?.toLowerCase().includes(filtroNombre.toLowerCase()))
   )
@@ -77,8 +92,13 @@ export default function Agenda() {
         <button className="btn-primary" onClick={() => setForm(CITA_VACIA)}>+ Agregar cita</button>
       </div>
 
-      <div className="flex flex-wrap gap-3 mb-6">
-        <input type="date" className="input w-auto" value={filtroFecha} onChange={(e) => setFiltroFecha(e.target.value)} />
+      <div className="flex flex-wrap items-end gap-3 mb-6">
+        <div>
+          <input type="date" className="input w-auto" value={filtroFecha} onChange={(e) => setFiltroFecha(e.target.value)} />
+          <p className="text-xs text-ink/50 mt-1 max-w-[220px]">
+            Sin fecha seleccionada se muestran solo las citas de hoy en adelante. Busca una fecha para ver citas pasadas.
+          </p>
+        </div>
         <select className="input w-auto" value={filtroEstado} onChange={(e) => setFiltroEstado(e.target.value)}>
           <option value="">Todos los estados</option>
           {ESTADOS.map((e) => <option key={e} value={e}>{e}</option>)}
@@ -135,7 +155,7 @@ export default function Agenda() {
             <div key={c.id} className="card p-4 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="font-medium">{c.nombre_paciente}</p>
-                <p className="text-sm text-ink/60">{c.fecha} · {c.hora} · {c.estado}</p>
+                <p className="text-sm text-ink/60">{formatearFecha(c.fecha)} · {c.hora} · {c.estado}</p>
                 {c.tratamiento && <p className="text-sm text-ink/60">{c.tratamiento}</p>}
               </div>
               <div className="flex gap-2 flex-wrap">
@@ -152,3 +172,4 @@ export default function Agenda() {
     </div>
   )
 }
+
