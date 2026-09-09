@@ -7,70 +7,72 @@ html, body, #root {
 }
 
 body {
-  background: #F6F3EC;
-  color: #16302E;
+  background: #F5FAFA;
+  color: #173B3E;
+  font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #C7D3CC transparent;
+  scrollbar-color: #B9DCDA transparent;
 }
 
 .card {
   background: #FFFFFF;
-  border: 1px solid #DDE4DE;
-  border-radius: 8px;
+  border: 1px solid #D8E8E7;
+  border-radius: 10px;
 }
 
 .btn-primary {
-  background: #0E4B44;
-  color: #F6F3EC;
-  border-radius: 6px;
+  background: #0E8388;
+  color: #F5FAFA;
+  border-radius: 8px;
   padding: 0.55rem 1.1rem;
-  font-weight: 500;
+  font-weight: 600;
   transition: background 0.15s ease;
 }
-.btn-primary:hover { background: #146B60; }
+.btn-primary:hover { background: #14A3A0; }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .btn-secondary {
   background: transparent;
-  color: #0E4B44;
-  border: 1px solid #0E4B44;
-  border-radius: 6px;
+  color: #0E8388;
+  border: 1px solid #0E8388;
+  border-radius: 8px;
   padding: 0.5rem 1rem;
-  font-weight: 500;
+  font-weight: 600;
   transition: background 0.15s ease;
 }
-.btn-secondary:hover { background: #E7EFE9; }
+.btn-secondary:hover { background: #E3F4F1; }
 
 .btn-danger {
-  color: #A6402B;
-  border: 1px solid #C96A4B;
-  border-radius: 6px;
+  color: #C2532C;
+  border: 1px solid #E8734A;
+  border-radius: 8px;
   padding: 0.5rem 1rem;
-  font-weight: 500;
+  font-weight: 600;
   background: transparent;
 }
-.btn-danger:hover { background: #F0DCD3; }
+.btn-danger:hover { background: #FBE4D9; }
 
 .input {
   width: 100%;
-  border: 1px solid #DDE4DE;
-  border-radius: 6px;
+  border: 1px solid #D8E8E7;
+  border-radius: 8px;
   padding: 0.5rem 0.7rem;
   background: #fff;
   font-size: 0.9rem;
+  font-family: inherit;
 }
 .input:focus {
-  outline: 2px solid #146B60;
+  outline: 2px solid #14A3A0;
   outline-offset: 1px;
 }
 
 label.field-label {
   font-size: 0.78rem;
-  color: #4B615C;
-  font-weight: 500;
+  color: #4E6E6C;
+  font-weight: 600;
   margin-bottom: 0.2rem;
   display: block;
 }
