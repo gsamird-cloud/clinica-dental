@@ -18,7 +18,7 @@ const CONDICION_COLOR = {
   Implante: '#3B82F6',
   Fractura: '#EF4444',
   Ausente: '#9CA3AF',
-  Obturado: '#146B60',
+  Obturado: '#0E8388',
   Puente: '#0EA5E9',
 }
 
@@ -40,9 +40,9 @@ function Diente({ numero, info, onClick }) {
       <div
         className="w-8 h-8 md:w-9 md:h-9 rounded-sm border flex items-center justify-center text-[10px] font-medium transition-colors"
         style={{
-          borderColor: color || '#DDE4DE',
+          borderColor: color || '#D8E8E7',
           background: color ? `${color}22` : '#fff',
-          color: color || '#4B615C',
+          color: color || '#4E6E6C',
         }}
       >
         {numero}
