@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { supabase, FILES_BUCKET } from '../lib/supabaseClient'
+import { supabase } from '../lib/supabaseClient'
 import Odontograma from '../components/Odontograma'
+import ArchivosPaciente from '../components/ArchivosPaciente'
 
 const TRATAMIENTO_VACIO = {
   fecha_atencion: '',
@@ -22,8 +23,6 @@ export default function PacienteDetalle() {
   const [editando, setEditando] = useState(false)
   const [form, setForm] = useState(null)
   const [tipoOdontograma, setTipoOdontograma] = useState('adulto')
-  const [archivos, setArchivos] = useState([])
-  const [subiendo, setSubiendo] = useState(false)
   const [tratamientos, setTratamientos] = useState([])
   const [tratForm, setTratForm] = useState(null) // null = oculto, objeto = editando/creando
 
@@ -31,11 +30,6 @@ export default function PacienteDetalle() {
     const { data } = await supabase.from('patients').select('*').eq('id', id).single()
     setPaciente(data)
     setForm(data)
-  }
-
-  async function cargarArchivos() {
-    const { data } = await supabase.storage.from(FILES_BUCKET).list(id, { sortBy: { column: 'created_at', order: 'desc' } })
-    setArchivos(data || [])
   }
 
   async function cargarTratamientos() {
@@ -49,7 +43,6 @@ export default function PacienteDetalle() {
 
   useEffect(() => {
     cargarPaciente()
-    cargarArchivos()
     cargarTratamientos()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
@@ -65,30 +58,6 @@ export default function PacienteDetalle() {
   async function guardarOdontograma(campo, data) {
     await supabase.from('patients').update({ [campo]: data }).eq('id', id)
     setPaciente((p) => ({ ...p, [campo]: data }))
-  }
-
-  async function subirArchivos(e) {
-    const files = Array.from(e.target.files || [])
-    if (!files.length) return
-    setSubiendo(true)
-    for (const file of files) {
-      const path = `${id}/${Date.now()}_${file.name}`
-      await supabase.storage.from(FILES_BUCKET).upload(path, file)
-    }
-    setSubiendo(false)
-    cargarArchivos()
-    e.target.value = ''
-  }
-
-  async function eliminarArchivo(nombre) {
-    if (!confirm(`¿Eliminar el archivo "${nombre}"?`)) return
-    await supabase.storage.from(FILES_BUCKET).remove([`${id}/${nombre}`])
-    cargarArchivos()
-  }
-
-  async function verArchivo(nombre) {
-    const { data } = await supabase.storage.from(FILES_BUCKET).createSignedUrl(`${id}/${nombre}`, 60 * 10)
-    if (data?.signedUrl) window.open(data.signedUrl, '_blank')
   }
 
   async function guardarTratamiento(e) {
@@ -202,28 +171,7 @@ export default function PacienteDetalle() {
         </div>
       )}
 
-      {tab === 'archivos' && (
-        <div>
-          <label className="btn-primary inline-block cursor-pointer mb-4">
-            {subiendo ? 'Subiendo…' : '+ Subir archivos'}
-            <input type="file" multiple accept=".png,.jpg,.jpeg,.pdf" className="hidden" onChange={subirArchivos} disabled={subiendo} />
-          </label>
-          {archivos.length === 0 ? (
-            <p className="text-ink/50">No hay archivos subidos.</p>
-          ) : (
-            <div className="card divide-y divide-line">
-              {archivos.map((f) => (
-                <div key={f.name} className="flex items-center justify-between px-4 py-3">
-                  <button className="text-sm text-pine hover:underline text-left" onClick={() => verArchivo(f.name)}>
-                    {f.name.replace(/^\d+_/, '')}
-                  </button>
-                  <button className="btn-danger text-xs" onClick={() => eliminarArchivo(f.name)}>Eliminar</button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+      {tab === 'archivos' && <ArchivosPaciente patientId={id} />}
 
       {tab === 'odontograma' && (
         <div>
