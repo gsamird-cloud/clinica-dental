@@ -98,3 +98,8 @@ create policy "Usuarios autenticados: subir archivos de pacientes"
 create policy "Usuarios autenticados: eliminar archivos de pacientes"
   on storage.objects for delete
   using (bucket_id = 'patient-files' and auth.role() = 'authenticated');
+
+create policy "Usuarios autenticados: renombrar archivos de pacientes"
+  on storage.objects for update
+  using (bucket_id = 'patient-files' and auth.role() = 'authenticated')
+  with check (bucket_id = 'patient-files' and auth.role() = 'authenticated');
