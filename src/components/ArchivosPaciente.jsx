@@ -134,7 +134,7 @@ export default function ArchivosPaciente({ patientId }) {
         onDragLeave={() => setArrastrando(false)}
         onDrop={onDrop}
       >
-        <p className="text-sm text-ink/60 mb-2">Arrastra aquí tus archivos, o</p>
+        <p className="hidden lg:block text-sm text-ink/60 mb-2">Arrastra aquí tus archivos, o</p>
         <button type="button" className="btn-primary" onClick={() => inputRef.current?.click()}>
           + Elegir archivos
         </button>
@@ -165,7 +165,7 @@ export default function ArchivosPaciente({ patientId }) {
                   </div>
                 )}
                 <input
-                  className="input flex-1"
+                  className="input flex-1 min-w-0"
                   value={p.nombre}
                   onChange={(e) =>
                     setPendientes((prev) => prev.map((x) => (x.key === p.key ? { ...x, nombre: e.target.value } : x)))
@@ -212,9 +212,9 @@ export default function ArchivosPaciente({ patientId }) {
                 )}
                 <div className="flex-1 min-w-0">
                   {renombrando === f.name ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
                       <input
-                        className="input"
+                        className="input flex-1 min-w-[8rem]"
                         autoFocus
                         value={valorRenombre}
                         onChange={(e) => setValorRenombre(e.target.value)}

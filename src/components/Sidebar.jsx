@@ -1,23 +1,18 @@
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { navItems } from './navItems'
 
-const items = [
-  { to: '/pacientes', label: 'Paciente' },
-  { to: '/agenda', label: 'Agenda' },
-  { to: '/finanzas', label: 'Finanzas' },
-  { to: '/estadisticas', label: 'Estadísticas' },
-]
 
 export default function Sidebar() {
   const { signOut } = useAuth()
 
   return (
-    <aside className="w-56 shrink-0 bg-pine text-sand min-h-screen flex flex-col">
+    <aside className="hidden lg:flex w-56 shrink-0 bg-pine text-sand h-screen sticky top-0 flex-col">
       <div className="px-5 py-6 border-b border-white/10">
         <h1 className="font-display text-lg leading-tight">Consultorio<br/>Dental</h1>
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1">
-        {items.map((item) => (
+        {navItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
