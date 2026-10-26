@@ -67,7 +67,7 @@ export default function Pacientes() {
   )
 
   return (
-    <div className="p-6 md:p-8 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
         <div>
           <h1 className="font-display text-2xl text-pine">Pacientes</h1>
@@ -143,8 +143,8 @@ export default function Pacientes() {
       ) : (
         <div className="card divide-y divide-line">
           {filtrados.map((p) => (
-            <div key={p.id} className="flex items-center justify-between px-4 py-3">
-              <Link to={`/pacientes/${p.id}`} className="flex-1">
+            <div key={p.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
+              <Link to={`/pacientes/${p.id}`} className="flex-1 min-w-[12rem]">
                 <p className="font-medium text-ink">{p.nombre_completo}</p>
                 <p className="text-xs text-ink/50">
                   {p.numero_identidad || 'Sin identidad'} · {p.telefono || 'Sin teléfono'}

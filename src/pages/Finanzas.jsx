@@ -41,7 +41,7 @@ export default function Finanzas() {
   }
 
   return (
-    <div className="p-6 md:p-8 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
       <h1 className="font-display text-2xl text-pine mb-1">Finanzas</h1>
       <p className="text-sm text-ink/60 mb-6">Resumen de pagos y saldos pendientes</p>
 
@@ -78,12 +78,12 @@ export default function Finanzas() {
       ) : (
         <div className="card divide-y divide-line mb-8">
           {filtrados.map((r) => (
-            <div key={r.id} className="flex items-center justify-between px-4 py-3 text-sm">
+            <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm">
               <div>
                 <p className="font-medium">{r.patients?.nombre_completo || 'Paciente eliminado'}</p>
                 <p className="text-ink/50">{r.fecha_atencion}</p>
               </div>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-x-4 gap-y-1">
                 <span>Anterior: L. {Number(r.saldo_anterior || 0).toFixed(2)}</span>
                 <span className="text-pine font-medium">Abono: L. {Number(r.abono || 0).toFixed(2)}</span>
                 <span>Actual: L. {Number(r.saldo_actual || 0).toFixed(2)}</span>
@@ -99,13 +99,13 @@ export default function Finanzas() {
       ) : (
         <div className="card divide-y divide-line">
           {pendientes.map((r) => (
-            <div key={r.id} className="flex items-center justify-between px-4 py-3 text-sm">
+            <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm">
               <div>
                 <p className="font-medium">{r.patients?.nombre_completo || 'Paciente eliminado'}</p>
                 <p className="text-ink/50">{r.fecha_atencion}</p>
               </div>
               {editando === r.id ? (
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <input
                     type="number"
                     step="0.01"
@@ -119,7 +119,7 @@ export default function Finanzas() {
                   <button className="btn-secondary text-xs" onClick={() => setEditando(null)}>Cancelar</button>
                 </div>
               ) : (
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <span className="text-clay font-medium">L. {Number(r.saldo_actual).toFixed(2)}</span>
                   <button className="text-xs text-pine hover:underline" onClick={() => setEditando(r.id)}>Modificar</button>
                   <button className="text-xs text-clay hover:underline" onClick={() => eliminarSaldo(r.id)}>Eliminar</button>

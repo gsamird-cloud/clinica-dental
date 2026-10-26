@@ -38,7 +38,7 @@ export default function Estadisticas() {
   const totalPacientesUnicos = new Set(tratamientos.map((t) => t.patient_id)).size
 
   return (
-    <div className="p-6 md:p-8 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
       <h1 className="font-display text-2xl text-pine mb-1">Estadísticas</h1>
       <p className="text-sm text-ink/60 mb-6">Cantidad de pacientes atendidos</p>
 

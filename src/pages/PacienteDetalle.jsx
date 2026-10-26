@@ -1,7 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
-import Odontograma from '../components/Odontograma'
+import Odontograma, {
+  CONDICIONES_TRATAMIENTO,
+  COLORES_TRATAMIENTO,
+} from '../components/Odontograma'
+import PendientesLista from '../components/PendientesLista'
+import DictadoOdontograma from '../components/DictadoOdontograma'
 import ArchivosPaciente from '../components/ArchivosPaciente'
 
 const TRATAMIENTO_VACIO = {
@@ -91,11 +96,13 @@ export default function PacienteDetalle() {
     { id: 'datos', label: 'Datos generales' },
     { id: 'archivos', label: 'Archivos' },
     { id: 'odontograma', label: 'Odontograma' },
+    { id: 'odontograma_trat', label: 'Tratamientos realizados' },
+    { id: 'pendientes', label: 'Pendientes' },
     { id: 'historia', label: 'Historia clínica' },
   ]
 
   return (
-    <div className="p-6 md:p-8 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
       <Link to="/pacientes" className="text-sm text-pine hover:underline">← Volver a pacientes</Link>
       <h1 className="font-display text-2xl text-pine mt-2 mb-1">{paciente.nombre_completo}</h1>
       <p className="text-sm text-ink/60 mb-6">{paciente.numero_identidad || 'Sin número de identidad'}</p>
@@ -173,37 +180,49 @@ export default function PacienteDetalle() {
 
       {tab === 'archivos' && <ArchivosPaciente patientId={id} />}
 
-      {tab === 'odontograma' && (
-        <div>
-          <div className="flex gap-2 mb-4">
-            <button
-              className={tipoOdontograma === 'adulto' ? 'btn-primary text-sm' : 'btn-secondary text-sm'}
-              onClick={() => setTipoOdontograma('adulto')}
-            >
-              Adulto
-            </button>
-            <button
-              className={tipoOdontograma === 'nino' ? 'btn-primary text-sm' : 'btn-secondary text-sm'}
-              onClick={() => setTipoOdontograma('nino')}
-            >
-              Niño
-            </button>
+      {(tab === 'odontograma' || tab === 'odontograma_trat') && (() => {
+        const esTrat = tab === 'odontograma_trat'
+        const campo = `${esTrat ? 'odontograma_trat_' : 'odontograma_'}${tipoOdontograma}`
+        return (
+          <div>
+            <p className="text-sm text-ink/60 mb-3">
+              {esTrat
+                ? 'Registra los tratamientos ya realizados en cada pieza (obturaciones, endodoncias, prótesis, coronas, puentes, extracciones, postes, carillas…). Haz clic en un diente para marcarlo.'
+                : 'Estado actual de cada pieza dental (diagnóstico). Haz clic en un diente para marcarlo.'}
+            </p>
+            <div className="flex gap-2 mb-4">
+              <button
+                className={tipoOdontograma === 'adulto' ? 'btn-primary text-sm' : 'btn-secondary text-sm'}
+                onClick={() => setTipoOdontograma('adulto')}
+              >
+                Adulto
+              </button>
+              <button
+                className={tipoOdontograma === 'nino' ? 'btn-primary text-sm' : 'btn-secondary text-sm'}
+                onClick={() => setTipoOdontograma('nino')}
+              >
+                Niño
+              </button>
+            </div>
+            <DictadoOdontograma
+              key={`dictado-${campo}`}
+              tipo={tipoOdontograma}
+              modo={esTrat ? 'tratamiento' : 'estado'}
+              data={paciente[campo] || {}}
+              onChange={(d) => guardarOdontograma(campo, d)}
+            />
+            <Odontograma
+              key={campo}
+              tipo={tipoOdontograma}
+              data={paciente[campo] || {}}
+              onChange={(d) => guardarOdontograma(campo, d)}
+              {...(esTrat ? { opciones: CONDICIONES_TRATAMIENTO, colores: COLORES_TRATAMIENTO } : {})}
+            />
           </div>
-          {tipoOdontograma === 'adulto' ? (
-            <Odontograma
-              tipo="adulto"
-              data={paciente.odontograma_adulto || {}}
-              onChange={(d) => guardarOdontograma('odontograma_adulto', d)}
-            />
-          ) : (
-            <Odontograma
-              tipo="nino"
-              data={paciente.odontograma_nino || {}}
-              onChange={(d) => guardarOdontograma('odontograma_nino', d)}
-            />
-          )}
-        </div>
-      )}
+        )
+      })()}
+
+      {tab === 'pendientes' && <PendientesLista patientId={id} />}
 
       {tab === 'historia' && (
         <div>
@@ -277,7 +296,7 @@ export default function PacienteDetalle() {
                   <p className="text-sm"><span className="text-ink/50">Diagnóstico:</span> {t.diagnostico || '—'}</p>
                   <p className="text-sm"><span className="text-ink/50">Tratamiento:</span> {t.tratamiento || '—'}</p>
                   {t.notas && <p className="text-sm"><span className="text-ink/50">Notas:</span> {t.notas}</p>}
-                  <div className="flex gap-4 mt-2 text-sm">
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm">
                     <span>Saldo anterior: <strong>L. {Number(t.saldo_anterior || 0).toFixed(2)}</strong></span>
                     <span>Abono: <strong>L. {Number(t.abono || 0).toFixed(2)}</strong></span>
                     <span>Saldo actual: <strong>L. {Number(t.saldo_actual || 0).toFixed(2)}</strong></span>

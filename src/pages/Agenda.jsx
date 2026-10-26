@@ -83,7 +83,7 @@ export default function Agenda() {
   )
 
   return (
-    <div className="p-6 md:p-8 max-w-5xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
       <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
         <div>
           <h1 className="font-display text-2xl text-pine">Agenda</h1>
@@ -172,4 +172,3 @@ export default function Agenda() {
     </div>
   )
 }
-
