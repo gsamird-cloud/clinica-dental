@@ -17,6 +17,10 @@ create table if not exists patients (
   antecedentes text,
   odontograma_adulto jsonb default '{}'::jsonb,
   odontograma_nino jsonb default '{}'::jsonb,
+  odontograma_trat_adulto jsonb default '{}'::jsonb,
+  odontograma_trat_nino jsonb default '{}'::jsonb,
+  tipo_control text default 'general',
+  ultimo_aviso_control date,
   created_at timestamptz default now()
 );
 
@@ -32,6 +36,7 @@ create table if not exists treatments (
   saldo_anterior numeric(10,2) default 0,
   abono numeric(10,2) default 0,
   saldo_actual numeric(10,2) default 0,
+  es_limpieza boolean,
   created_at timestamptz default now()
 );
 
@@ -48,10 +53,23 @@ create table if not exists appointments (
   created_at timestamptz default now()
 );
 
+-- Tratamientos pendientes por paciente --------------------------------
+create table if not exists pending_treatments (
+  id uuid primary key default uuid_generate_v4(),
+  patient_id uuid references patients(id) on delete cascade,
+  tratamiento text not null,
+  piezas_dentales text,
+  estado text default 'Pendiente',
+  ultimo_contacto date,
+  notas text,
+  created_at timestamptz default now()
+);
+
 -- Índices útiles ---------------------------------------------------------
 create index if not exists idx_treatments_patient on treatments(patient_id);
 create index if not exists idx_treatments_fecha on treatments(fecha_atencion);
 create index if not exists idx_appointments_fecha on appointments(fecha);
+create index if not exists idx_pending_patient on pending_treatments(patient_id);
 
 -- ============================================================
 -- Seguridad (RLS): solo usuarios autenticados (creados manualmente
@@ -62,6 +80,7 @@ create index if not exists idx_appointments_fecha on appointments(fecha);
 alter table patients enable row level security;
 alter table treatments enable row level security;
 alter table appointments enable row level security;
+alter table pending_treatments enable row level security;
 
 create policy "Usuarios autenticados: acceso total a patients"
   on patients for all
@@ -75,6 +94,11 @@ create policy "Usuarios autenticados: acceso total a treatments"
 
 create policy "Usuarios autenticados: acceso total a appointments"
   on appointments for all
+  using (auth.role() = 'authenticated')
+  with check (auth.role() = 'authenticated');
+
+create policy "Usuarios autenticados: acceso total a pending_treatments"
+  on pending_treatments for all
   using (auth.role() = 'authenticated')
   with check (auth.role() = 'authenticated');
 
