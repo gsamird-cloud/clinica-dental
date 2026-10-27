@@ -98,6 +98,14 @@ En la pestaña **Pendientes** del expediente, el botón "Analizar odontogramas" 
 estado con el de tratamientos realizados y propone lo que falta (función `netlify/functions/detectar-pendientes.js`,
 usa la misma `ANTHROPIC_API_KEY`). El odontólogo revisa las sugerencias y elige cuáles agregar.
 
+### Control de limpiezas (cada 6 meses; cada 3 en ortodoncia)
+
+Menú **Controles**: lista a los pacientes ordenados por urgencia (vencidos, sin registro, próximos, al día), con
+WhatsApp, llamada, "marcar avisado" y "registrar limpieza realizada". Requiere correr
+`supabase/migracion_v3.sql` en Supabase. Las fechas se calculan con código exacto (`src/lib/controles.js`); la IA
+(`netlify/functions/analizar-historial.js`) solo lee el historial en texto libre para marcar qué atenciones fueron
+limpiezas y detectar pacientes en ortodoncia.
+
 ## Estructura del proyecto
 
 ```
