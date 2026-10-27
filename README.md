@@ -77,6 +77,21 @@ desde cualquier navegador e internet.
 
 ---
 
+## 4. Dictado por voz con IA (opcional)
+
+El panel "Llenar por dictado de voz (IA)" de los odontogramas usa Claude para convertir lo dictado
+(ej. "pieza 16 obturación, 24 endodoncia") en registros. Para activarlo:
+
+1. Crea una cuenta en [console.anthropic.com](https://console.anthropic.com), agrega saldo (pago por uso,
+   sin mensualidad) y crea una **API key**.
+2. En Netlify: **Site configuration → Environment variables** → agrega `ANTHROPIC_API_KEY` con esa llave.
+   (Opcional: `ANTHROPIC_MODEL` para cambiar el modelo; por defecto usa `claude-haiku-5-5`.)
+3. Vuelve a desplegar (Deploys → Trigger deploy).
+
+La llave vive solo en el servidor (función `netlify/functions/dictado-odontograma.js`), nunca en el navegador,
+y la función solo responde a usuarios con sesión iniciada. El dictado funciona solo en el sitio publicado en
+Netlify (no con `npm run dev`). Al servicio de IA solo viaja el texto dictado, nunca nombres ni datos del paciente.
+
 ## Estructura del proyecto
 
 ```
