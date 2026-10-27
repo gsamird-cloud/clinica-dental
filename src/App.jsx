@@ -7,6 +7,7 @@ import Pacientes from './pages/Pacientes'
 import PacienteDetalle from './pages/PacienteDetalle'
 import Agenda from './pages/Agenda'
 import Pendientes from './pages/Pendientes'
+import Controles from './pages/Controles'
 import Finanzas from './pages/Finanzas'
 import Estadisticas from './pages/Estadisticas'
 
@@ -45,6 +46,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Layout><Pendientes /></Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/controles"
+          element={
+            <ProtectedRoute>
+              <Layout><Controles /></Layout>
             </ProtectedRoute>
           }
         />
