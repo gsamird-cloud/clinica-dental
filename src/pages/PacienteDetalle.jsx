@@ -8,6 +8,7 @@ import Odontograma, {
 import PendientesLista from '../components/PendientesLista'
 import DictadoOdontograma from '../components/DictadoOdontograma'
 import DetectarPendientesIA from '../components/DetectarPendientesIA'
+import { ETIQUETA_TIPO, calcularControl, fechaCorta } from '../lib/controles'
 import ArchivosPaciente from '../components/ArchivosPaciente'
 
 const TRATAMIENTO_VACIO = {
@@ -19,6 +20,7 @@ const TRATAMIENTO_VACIO = {
   saldo_anterior: '',
   abono: '',
   saldo_actual: '',
+  incluye_limpieza: false,
 }
 
 export default function PacienteDetalle() {
@@ -69,13 +71,18 @@ export default function PacienteDetalle() {
 
   async function guardarTratamiento(e) {
     e.preventDefault()
+    const { incluye_limpieza, ...datosForm } = tratForm
     const payload = {
-      ...tratForm,
+      ...datosForm,
       patient_id: id,
       saldo_anterior: tratForm.saldo_anterior ? parseFloat(tratForm.saldo_anterior) : 0,
       abono: tratForm.abono ? parseFloat(tratForm.abono) : 0,
       saldo_actual: tratForm.saldo_actual ? parseFloat(tratForm.saldo_actual) : 0,
     }
+    // es_limpieza es tri-estado (null = sin clasificar): solo se envía si hay un valor definido
+    if (incluye_limpieza) payload.es_limpieza = true
+    else if (tratForm.es_limpieza === true) payload.es_limpieza = false
+    else delete payload.es_limpieza
     if (tratForm.id) {
       const { id: tid, created_at, ...rest } = payload
       await supabase.from('treatments').update(rest).eq('id', tid)
@@ -93,6 +100,15 @@ export default function PacienteDetalle() {
   }
 
   if (!paciente) return <div className="p-8 text-ink/50">Cargando expediente…</div>
+
+  // Control de limpieza (cálculo exacto con las atenciones marcadas como limpieza)
+  const tipoControl = paciente.tipo_control || 'general'
+  const ultimaLimpieza = tratamientos
+    .filter((t) => t.es_limpieza === true)
+    .map((t) => t.fecha_atencion)
+    .sort()
+    .pop()
+  const control = calcularControl(tipoControl, ultimaLimpieza)
 
   const tabs = [
     { id: 'datos', label: 'Datos generales' },
@@ -133,6 +149,16 @@ export default function PacienteDetalle() {
                 <div><dt className="text-ink/50">Sexo</dt><dd>{paciente.sexo || '—'}</dd></div>
                 <div><dt className="text-ink/50">Dirección</dt><dd>{paciente.direccion || '—'}</dd></div>
                 <div className="md:col-span-2"><dt className="text-ink/50">Antecedentes médicos / alergias</dt><dd>{paciente.antecedentes || '—'}</dd></div>
+                <div className="md:col-span-2">
+                  <dt className="text-ink/50">Control de limpieza</dt>
+                  <dd>
+                    {ETIQUETA_TIPO[tipoControl]}
+                    {control &&
+                      (control.ultima
+                        ? ` · Última: ${fechaCorta(control.ultima)} · Próxima: ${fechaCorta(control.proxima)}`
+                        : ' · Sin limpieza registrada')}
+                  </dd>
+                </div>
               </dl>
               <button className="btn-secondary" onClick={() => setEditando(true)}>Modificar datos</button>
             </div>
@@ -161,6 +187,14 @@ export default function PacienteDetalle() {
                   <option value="Femenino">Femenino</option>
                   <option value="Masculino">Masculino</option>
                   <option value="Otro">Otro</option>
+                </select>
+              </div>
+              <div>
+                <label className="field-label">Control de limpieza</label>
+                <select className="input" value={form.tipo_control || 'general'} onChange={(e) => setForm({ ...form, tipo_control: e.target.value })}>
+                  <option value="general">{ETIQUETA_TIPO.general}</option>
+                  <option value="ortodoncia">{ETIQUETA_TIPO.ortodoncia}</option>
+                  <option value="ninguno">{ETIQUETA_TIPO.ninguno}</option>
                 </select>
               </div>
               <div className="md:col-span-2">
@@ -279,6 +313,15 @@ export default function PacienteDetalle() {
                 <input className="input" type="number" step="0.01" value={tratForm.saldo_actual}
                   onChange={(e) => setTratForm({ ...tratForm, saldo_actual: e.target.value })} />
               </div>
+              <label className="md:col-span-2 flex items-center gap-2 text-sm cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4"
+                  checked={!!tratForm.incluye_limpieza}
+                  onChange={(e) => setTratForm({ ...tratForm, incluye_limpieza: e.target.checked })}
+                />
+                Esta atención incluyó limpieza dental
+              </label>
               <div className="md:col-span-2 flex gap-2">
                 <button type="submit" className="btn-primary">Guardar</button>
                 <button type="button" className="btn-secondary" onClick={() => setTratForm(null)}>Cancelar</button>
@@ -295,7 +338,7 @@ export default function PacienteDetalle() {
                   <div className="flex items-center justify-between mb-2">
                     <p className="font-medium text-pine">{t.fecha_atencion}</p>
                     <div className="flex gap-2">
-                      <button className="text-xs text-pine hover:underline" onClick={() => setTratForm(t)}>Modificar</button>
+                      <button className="text-xs text-pine hover:underline" onClick={() => setTratForm({ ...t, incluye_limpieza: t.es_limpieza === true })}>Modificar</button>
                       <button className="text-xs text-clay hover:underline" onClick={() => eliminarTratamiento(t.id)}>Eliminar</button>
                     </div>
                   </div>
