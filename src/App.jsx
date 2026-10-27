@@ -6,6 +6,7 @@ import Login from './pages/Login'
 import Pacientes from './pages/Pacientes'
 import PacienteDetalle from './pages/PacienteDetalle'
 import Agenda from './pages/Agenda'
+import Pendientes from './pages/Pendientes'
 import Finanzas from './pages/Finanzas'
 import Estadisticas from './pages/Estadisticas'
 
@@ -36,6 +37,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Layout><Agenda /></Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pendientes"
+          element={
+            <ProtectedRoute>
+              <Layout><Pendientes /></Layout>
             </ProtectedRoute>
           }
         />
