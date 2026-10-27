@@ -24,7 +24,7 @@ function fechaCorta(iso) {
 
 // Si se pasa patientId, muestra solo los pendientes de ese paciente (dentro del expediente).
 // Si no, muestra el listado general de todos los pacientes.
-export default function PendientesLista({ patientId = null }) {
+export default function PendientesLista({ patientId = null, refreshKey = 0 }) {
   const [items, setItems] = useState([])
   const [pacientes, setPacientes] = useState([])
   const [loading, setLoading] = useState(true)
@@ -57,7 +57,7 @@ export default function PendientesLista({ patientId = null }) {
     cargar()
     if (!patientId) cargarPacientes()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [patientId])
+  }, [patientId, refreshKey])
 
   function nuevo() {
     setError('')
