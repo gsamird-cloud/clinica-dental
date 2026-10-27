@@ -7,6 +7,7 @@ import Odontograma, {
 } from '../components/Odontograma'
 import PendientesLista from '../components/PendientesLista'
 import DictadoOdontograma from '../components/DictadoOdontograma'
+import DetectarPendientesIA from '../components/DetectarPendientesIA'
 import ArchivosPaciente from '../components/ArchivosPaciente'
 
 const TRATAMIENTO_VACIO = {
@@ -29,6 +30,7 @@ export default function PacienteDetalle() {
   const [form, setForm] = useState(null)
   const [tipoOdontograma, setTipoOdontograma] = useState('adulto')
   const [tratamientos, setTratamientos] = useState([])
+  const [pendKey, setPendKey] = useState(0) // fuerza recargar la lista de pendientes
   const [tratForm, setTratForm] = useState(null) // null = oculto, objeto = editando/creando
 
   async function cargarPaciente() {
@@ -222,7 +224,12 @@ export default function PacienteDetalle() {
         )
       })()}
 
-      {tab === 'pendientes' && <PendientesLista patientId={id} />}
+      {tab === 'pendientes' && (
+        <div>
+          <DetectarPendientesIA paciente={paciente} onAgregado={() => setPendKey((k) => k + 1)} />
+          <PendientesLista patientId={id} refreshKey={pendKey} />
+        </div>
+      )}
 
       {tab === 'historia' && (
         <div>
