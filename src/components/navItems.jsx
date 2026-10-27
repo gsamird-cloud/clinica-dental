@@ -20,6 +20,7 @@ export const navItems = [
   {
     to: '/pacientes',
     label: 'Paciente',
+    corto: 'Pacientes',
     icon: (
       <Icon>
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
@@ -49,6 +50,18 @@ export const navItems = [
     ),
   },
   {
+    to: '/controles',
+    label: 'Controles',
+    icon: (
+      <Icon>
+        <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+        <path d="M21 3v5h-5" />
+        <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+        <path d="M3 21v-5h5" />
+      </Icon>
+    ),
+  },
+  {
     to: '/finanzas',
     label: 'Finanzas',
     icon: (
@@ -61,6 +74,7 @@ export const navItems = [
   {
     to: '/estadisticas',
     label: 'Estadísticas',
+    corto: 'Estadíst.',
     icon: (
       <Icon>
         <path d="M3 3v18h18" />

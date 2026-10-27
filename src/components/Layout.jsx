@@ -25,7 +25,7 @@ export default function Layout({ children }) {
       <main className="flex-1 min-w-0 pb-24 lg:pb-0">{children}</main>
 
       <nav
-        className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-line grid grid-cols-5"
+        className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white border-t border-line grid grid-cols-6"
         style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       >
         {navItems.map((item) => (
@@ -33,13 +33,13 @@ export default function Layout({ children }) {
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-0.5 pt-2 pb-1.5 text-[10px] sm:text-xs font-semibold ${
+              `flex flex-col items-center gap-0.5 px-0.5 pt-2 pb-1.5 text-[10px] sm:text-xs font-semibold ${
                 isActive ? 'text-pine' : 'text-ink/50'
               }`
             }
           >
             {item.icon}
-            {item.label}
+            {item.corto || item.label}
           </NavLink>
         ))}
       </nav>
