@@ -92,6 +92,12 @@ La llave vive solo en el servidor (función `netlify/functions/dictado-odontogra
 y la función solo responde a usuarios con sesión iniciada. El dictado funciona solo en el sitio publicado en
 Netlify (no con `npm run dev`). Al servicio de IA solo viaja el texto dictado, nunca nombres ni datos del paciente.
 
+### Detección de pendientes con IA
+
+En la pestaña **Pendientes** del expediente, el botón "Analizar odontogramas" compara el odontograma de
+estado con el de tratamientos realizados y propone lo que falta (función `netlify/functions/detectar-pendientes.js`,
+usa la misma `ANTHROPIC_API_KEY`). El odontólogo revisa las sugerencias y elige cuáles agregar.
+
 ## Estructura del proyecto
 
 ```
